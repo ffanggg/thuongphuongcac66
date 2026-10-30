@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kiểm tra kết nối</title>
+<style>
+body{font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;margin:0;padding:24px 16px;background:#f5f7fb;color:#16213a}
+main{max-width:760px;margin:0 auto;background:#fff;border:1px solid #dbe2ee;border-radius:12px;padding:20px 22px}
+h1{font-size:20px;margin:0 0 4px;color:#1d3f82}
+p{margin:4px 0 14px;color:#5a6680}
+table{border-collapse:collapse;width:100%}
+td{border-top:1px solid #dbe2ee;padding:8px 6px;vertical-align:top}
+td:first-child{width:28px}
+td small{color:#5a6680;word-break:break-word}
+a{color:#c23320}
+</style>
+</head>
+<body>
+<main>
+<h1>Kiểm tra kết nối Thượng Phương Các</h1>
+<p>Trang này chỉ đọc dữ liệu, không thay đổi gì. Chụp toàn bộ màn hình này gửi cho người hỗ trợ.</p>
+<table id="t"></table>
+<p style="margin-top:14px"><a href="/">← Về trang học</a></p>
+</main>
+<script src="/assets/vendor/supabase.js?v=k1"></script>
+<script src="/assets/auth.js?v=k1"></script>
+<script>
+(async function(){
+  const t = document.getElementById("t");
+  const row = (ok, name, info) => { const tr = document.createElement("tr"); tr.innerHTML = `<td>${ok === null ? "…" : ok ? "✅" : "❌"}</td><td><b>${name}</b><br><small>${String(info || "").replace(/</g,"&lt;")}</small></td>`; t.appendChild(tr); };
+  const T = (p, ms) => Promise.race([p, new Promise((_, r) => setTimeout(() => r(new Error("quá " + (ms/1000) + " giây không phản hồi")), ms))]);
+  try {
+    const bj = await (await fetch("/assets/boot.js", { cache: "no-store" })).text();
+    row(/TPC_V/.test(bj), "Phiên bản web trên máy chủ", /TPC_V/.test(bj) ? "bản mới (30/10-4)" : "vẫn là bản cũ – kiểm tra lại GitHub");
+    const ij = await (await fetch("/", { cache: "no-store" })).text();
+    const m = ij.match(/bản 30\/10[-0-9]*/); row(!!m && /-4/.test(m[0]), "Trang chính", m ? m[0] : "không thấy số phiên bản");
+  } catch (e) { row(false, "Phiên bản web", e.message); }
+  if (typeof supabase === "undefined") return row(false, "Thư viện Supabase", "không tải được /assets/vendor/supabase.js");
+  let sb; try { sb = await TPC.client(); row(true, "Cấu hình máy chủ", "đọc /api/config được"); } catch (e) { return row(false, "Cấu hình máy chủ", e.message); }
+  let session;
+  try { ({ data: { session } } = await T(sb.auth.getSession(), 15000)); } catch (e) { return row(false, "Phiên đăng nhập", e.message); }
+  if (!session) return row(false, "Phiên đăng nhập", "chưa đăng nhập – hãy đăng nhập ở trang chính rồi mở lại trang này");
+  const uid = session.user.id;
+  row(true, "Phiên đăng nhập", session.user.email + " · id " + uid.slice(0, 8) + "…");
+  const q = async (name, fn) => {
+    try {
+      const r = await T(fn(), 15000);
+      if (r.error) row(false, name, (r.error.code ? "[" + r.error.code + "] " : "") + r.error.message + (r.error.hint ? " – " + r.error.hint : ""));
+      else row(true, name, Array.isArray(r.data) ? r.data.length + " dòng" + (r.data.length && r.data[0].role ? " · role = " + r.data[0].role : "") : JSON.stringify(r.data).slice(0, 120));
+    } catch (e) { row(false, name, e.message); }
+  };
+  await q("Hồ sơ của tôi (profiles)", () => sb.from("profiles").select("email,role").eq("id", uid));
+  await q("Tiến độ (progress) – đọc", () => sb.from("progress").select("user_id").limit(5));
+  await q("Bài tập giao (assignments)", () => sb.from("assignments").select("id").limit(5));
+  await q("Giáo án (plans)", () => sb.from("plans").select("id").limit(5));
+  await q("Danh sách lớp (classes)", () => sb.from("classes").select("id,data,created_at"));
+  await q("Thành viên lớp (class_members)", () => sb.from("class_members").select("class_id").limit(5));
+  await q("Mã lớp (class_codes, chỉ giáo viên)", () => sb.rpc("class_codes"));
+  await q("Kiểm tra quyền giáo viên (is_teacher)", () => sb.rpc("is_teacher"));
+  row(true, "Trình duyệt", navigator.userAgent);
+})();
+</script>
+</body>
+</html>
