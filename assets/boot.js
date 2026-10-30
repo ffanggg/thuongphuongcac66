@@ -26,7 +26,8 @@
   // Hồ sơ (tên, lớp, vai trò)
   let profile = null;
   {
-    const { data } = await sb.from("profiles").select("id,email,full_name,class_name,role").eq("id", user.id).maybeSingle();
+    const { data, error } = await sb.from("profiles").select("id,email,full_name,class_name,role").eq("id", user.id).maybeSingle();
+    if (error) { console.warn("profiles", error); window.TPC_PROFILE_ERR = error.message; }
     profile = data || { id: user.id, email: user.email, full_name: user.user_metadata?.full_name || "", class_name: user.user_metadata?.class_name || "", role: "student" };
   }
 
@@ -171,7 +172,7 @@
 
   // Mở trang học
   const s = document.createElement("script");
-  s.src = "/assets/app.js";
+  s.src = "/assets/app.js?v=" + (window.TPC_V || Date.now());
   s.onload = () => { document.body.classList.remove("locked"); const g = document.getElementById("gate"); if (g) g.remove(); };
   s.onerror = () => fail("Không tải được nội dung bài học (assets/app.js).");
   document.body.appendChild(s);

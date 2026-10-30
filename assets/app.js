@@ -13011,7 +13011,7 @@ function save() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     const snap = JSON.parse(JSON.stringify(ME));
-    saving = saving.then(() => P.db.collection("progress").doc(P.uid).set(snap)).catch(e => { console.warn("save", e); if (e && e.code === "invalid_argument") { P.canWrite = false; setSync(false, "Chỉ lưu trên máy này"); } });
+    saving = saving.then(() => P.db.collection("progress").doc(P.uid).set(snap)).catch(e => { console.warn("save", e); if (e && e.code === "invalid_argument") { P.canWrite = false; P.err = P.err || ("Lưu tiến độ: " + (e.message || "")); setSync(false, "Chỉ lưu trên máy này"); } });
   }, 900);
 }
 function lessonKey() { return S.course + "-" + S.lesson; }
@@ -13047,6 +13047,7 @@ async function resolveNames(ids) {
 async function initCaps() {
   const CAPS = window.TPC_CAPS || window.claude;
   if (!CAPS || !CAPS.use) return;
+  if (window.TPC_PROFILE_ERR) P.err = "Bảng profiles: " + window.TPC_PROFILE_ERR;
   try {
     const [db, user] = await Promise.all([CAPS.use("db"), CAPS.use("user")]);
     P.user = user;
@@ -13064,7 +13065,7 @@ async function initCaps() {
     if (CLX()) { await loadClasses(); setInterval(loadClasses, 30000); }
     else db.collection("classes").onSnapshot(s => { P.classes = s.docs.map(d => ({ id: d.id, ...d.data() })); syncLocalClasses(); }, e => { console.warn("classes", e); });
     P.ready = true; if (S.view !== "course") render();
-  } catch (e) { console.warn("caps", e); }
+  } catch (e) { console.warn("caps", e); P.err = (e && (e.message || e.code)) || String(e); setSync(false, "Lỗi kết nối dữ liệu"); render(); }
 }
 
 /* ================= Trạng thái giao diện ================= */
@@ -13590,7 +13591,7 @@ async function loadClasses() {
     if (P.teacher) { const [codes, mem] = await Promise.all([X.codes(), X.members()]); P.codes = codes; P.members = mem; }
     P.clsReady = true;
     if (["classes", "course", "home", "monitor"].includes(S.view)) soft();
-  } catch (e) { console.warn("classes", e); }
+  } catch (e) { console.warn("classes", e); P.clsErr = (e && e.message) || String(e); if (S.view === "classes") soft(); }
 }
 async function clsJoin(code) {
   code = code.trim().toUpperCase().replace(/\s+/g, ""); const X = CLX(); let id;
@@ -13794,8 +13795,8 @@ function bindAssignForm(app) {
 function vClasses(app) {
   const T = !!(P.teacher && P.db);
   const head = `<div class="eyebrow">Lớp học</div>`;
-  if (!P.db) { app.innerHTML = `<section class="view">${head}<h2 style="font-size:28px;margin-bottom:18px">Lớp của bạn</h2><div class="empty"><h3>Cần đăng nhập để vào lớp</h3>Trang đang ở chế độ ngoại tuyến. Khi đăng nhập, em nhập mã lớp cô gửi để vào lớp và mở các khoá học của lớp.</div></section>`; return; }
-  if (!P.clsReady) { app.innerHTML = `<section class="view">${head}<h2 style="font-size:28px">Đang tải lớp học…</h2></section>`; return; }
+  if (!P.db) { app.innerHTML = `<section class="view">${head}<h2 style="font-size:28px;margin-bottom:18px">Lớp của bạn</h2><div class="empty"><h3>Cần đăng nhập để vào lớp</h3>${P.err ? `Không kết nối được dữ liệu lớp học. Chi tiết lỗi: <b>${esc(P.err)}</b>` : "Trang đang ở chế độ ngoại tuyến. Khi đăng nhập, em nhập mã lớp cô gửi để vào lớp và mở các khoá học của lớp."}</div></section>`; return; }
+  if (!P.clsReady) { app.innerHTML = `<section class="view">${head}<h2 style="font-size:28px">${P.clsErr ? "Chưa tải được lớp học" : "Đang tải lớp học…"}</h2>${P.clsErr || P.err ? `<div class="empty" style="margin-top:16px;text-align:left"><b>Chi tiết lỗi (chụp màn hình gửi admin):</b><br>${P.clsErr ? "Lớp học: " + esc(P.clsErr) + "<br>" : ""}${P.err ? esc(P.err) : ""}<br><span class="muted">Vai trò hiện tại: ${P.teacher ? "giáo viên" : "học sinh"}</span></div>` : ""}</section>`; return; }
   return T ? vClassesTeacher(app, head) : vClassesStudent(app, head);
 }
 function vClassesStudent(app, head) {

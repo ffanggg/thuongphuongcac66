@@ -198,6 +198,18 @@ create policy "plans insert" on public.plans for insert to authenticated with ch
 create policy "plans update" on public.plans for update to authenticated using (public.is_teacher()) with check (public.is_teacher());
 create policy "plans delete" on public.plans for delete to authenticated using (public.is_teacher());
 
+
+-- =========================================================
+-- 0) CẤP QUYỀN CƠ BẢN (project Supabase mới không tự cấp quyền cho bảng tạo bằng SQL)
+-- =========================================================
+grant usage on schema public to authenticated;
+grant select on public.profiles to authenticated;
+grant select, insert, update, delete on public.progress    to authenticated;
+grant select, insert, update, delete on public.assignments to authenticated;
+grant select, insert, update, delete on public.plans       to authenticated;
+grant select, delete on public.class_members to authenticated;
+grant execute on function public.is_teacher() to authenticated;
+
 -- =========================================================
 -- SAU KHI CÔ ĐĂNG KÝ TÀI KHOẢN CỦA MÌNH trên website, chạy lệnh dưới
 -- (thay email) để cấp quyền giáo viên:
