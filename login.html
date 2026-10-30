@@ -118,10 +118,8 @@ input:focus{outline:2px solid var(--navy-2);outline-offset:1px;border-color:tran
   </main>
 </div>
 
-<script src="/assets/vendor/supabase.js"></script>
-<script src="/assets/auth.js"></script>
 <script>
-(async function () {
+function __loginMain(){ return (async function () {
   const $ = s => document.querySelector(s);
   const params = new URLSearchParams(location.search);
   const next = TPC.safeNext(params.get("next"));
@@ -212,6 +210,16 @@ input:focus{outline:2px solid var(--navy-2);outline-offset:1px;border-color:tran
     show("Đã đổi mật khẩu. Đang vào trang học…", true);
     setTimeout(() => location.replace("/"), 900);
   };
+})(); }
+(function(){
+  var L=["/assets/vendor/supabase.js","/assets/auth.js"];
+  function load(i,n){
+    if(i>=L.length){__loginMain();return}
+    var s=document.createElement("script"),done=0;s.src=L[i]+"?v=3010"+(n?"r"+n:"");
+    function next(ok){if(done)return;done=1;clearTimeout(t);if(ok)load(i+1,0);else if(n<3){s.remove();load(i,n+1)}else{var m=document.getElementById("msg");if(m){m.textContent="Không tải được "+L[i]+". Hãy kiểm tra mạng (thử bật VPN) rồi tải lại trang.";m.className="msg bad";m.hidden=false}}}
+    var t=setTimeout(function(){next(false)},12000);s.onload=function(){next(true)};s.onerror=function(){next(false)};document.body.appendChild(s);
+  }
+  load(0,0);
 })();
 </script>
 </body>
