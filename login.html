@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Đăng nhập · Thượng Phương Các</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Noto+Serif+SC:wght@700&display=swap">
+<style>
+:root{
+  --navy:#132a5c; --navy-2:#1d3f82; --navy-soft:#e8eef9; --accent:#c23320; --accent-soft:#fbe9e6;
+  --bg:#ffffff; --surface:#f5f7fb; --line:#dbe2ee; --ink:#16213a; --muted:#5a6680;
+  --ok:#17855a; --ok-bg:#e5f5ed; --bad:#b42318; --bad-bg:#fdebe8;
+  --f-ui:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0d1424; --surface:#131c31; --line:#26324e; --ink:#e6ebf5; --muted:#9ba7c0; --navy-soft:#1a2747; --navy-2:#7ea2e6;
+  --accent:#e2563f; --accent-soft:#3a1a15; --ok:#48c48a; --ok-bg:#103223; --bad:#f2846f; --bad-bg:#3a1a15; color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-ui)}
+[hidden]{display:none!important}
+.wrap{min-height:100vh;min-height:100dvh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.side{background:var(--navy);color:#fff;padding:48px max(32px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:24px;position:relative;overflow:hidden}
+.brand{display:flex;align-items:center;gap:12px}
+.seal{width:44px;height:44px;border-radius:8px;background:var(--accent);display:grid;place-items:center;font:700 24px "Noto Serif SC",serif;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+.brand b{font-size:20px;display:block}
+.brand small{opacity:.7;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.side h1{font-size:clamp(26px,3vw,36px);line-height:1.25;margin:12px 0 0;text-wrap:balance}
+.side p{opacity:.8;max-width:42ch;margin:0}
+.side img{align-self:center;max-height:min(42vh,380px);max-width:100%;margin-top:auto;filter:drop-shadow(0 18px 24px rgba(0,0,0,.35))}
+.big{position:absolute;right:-20px;bottom:-40px;font:700 240px "Noto Serif SC",serif;opacity:.06;line-height:1;pointer-events:none}
+.main{display:grid;place-items:center;padding:40px max(20px,env(safe-area-inset-right,0px)) 40px max(20px,env(safe-area-inset-left,0px))}
+.card{width:min(420px,100%)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:22px}
+.tabs button{flex:1;border:0;background:none;font:inherit;font-weight:600;color:var(--muted);padding:12px 4px;border-bottom:2.5px solid transparent;margin-bottom:-1px;cursor:pointer}
+.tabs button.on{color:var(--navy-2);border-bottom-color:var(--accent)}
+h2{font-size:22px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 18px;font-size:14px}
+form{display:grid;gap:14px}
+label{display:grid;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+input{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:11px 12px;width:100%}
+input:focus{outline:2px solid var(--navy-2);outline-offset:1px;border-color:transparent}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{font:inherit;font-weight:600;border:0;border-radius:9px;padding:12px 16px;background:var(--accent);color:#fff;cursor:pointer}
+.btn:disabled{opacity:.55;cursor:wait}
+.link{background:none;border:0;color:var(--navy-2);font:inherit;font-size:14px;cursor:pointer;padding:0;text-decoration:underline;justify-self:start}
+.msg{padding:10px 12px;border-radius:9px;font-size:14px}
+.msg.bad{background:var(--bad-bg);color:var(--bad)}
+.msg.ok{background:var(--ok-bg);color:var(--ok)}
+.hint{font-size:12.5px;color:var(--muted);margin:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:820px){
+  .wrap{grid-template-columns:1fr}
+  .side{padding:28px 20px;padding-top:calc(28px + env(safe-area-inset-top,0px))}
+  .side img,.side p,.big{display:none}
+  .side h1{font-size:22px;margin:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="side">
+    <div class="brand"><span class="seal">阁</span><span><b>Thượng Phương Các</b><small>Học tiếng Trung · HSK</small></span></div>
+    <h1>Ôn tập HSK cùng cô Linh Phương</h1>
+    <p>Đăng nhập để học bài, làm bài tập và lưu tiến độ. Cô sẽ theo dõi được kết quả của từng bạn.</p>
+    <img src="/assets/chibi.webp" alt="Hình chibi cô Nguyễn Thị Linh Phương">
+    <div class="big">学</div>
+  </section>
+
+  <main class="main">
+    <div class="card">
+      <div class="tabs" role="tablist" id="tabs">
+        <button type="button" class="on" data-m="login">Đăng nhập</button>
+        <button type="button" data-m="signup">Đăng ký</button>
+      </div>
+      <div id="msg" class="msg" hidden></div>
+
+      <!-- Đăng nhập -->
+      <form id="f-login" novalidate>
+        <div><h2>Chào mừng em quay lại</h2><p class="sub">Đăng nhập bằng email và mật khẩu đã đăng ký.</p></div>
+        <label>Email<input id="l-email" type="email" autocomplete="email" required></label>
+        <label>Mật khẩu<input id="l-pass" type="password" autocomplete="current-password" required></label>
+        <button class="btn" type="submit">Đăng nhập</button>
+        <button class="link" type="button" id="to-forgot">Quên mật khẩu?</button>
+      </form>
+
+      <!-- Đăng ký -->
+      <form id="f-signup" novalidate hidden>
+        <div><h2>Tạo tài khoản học sinh</h2><p class="sub">Điền đúng họ tên và lớp để cô nhận ra em trong danh sách.</p></div>
+        <label>Họ và tên<input id="s-name" autocomplete="name" required maxlength="60" placeholder="VD: Nguyễn Minh Anh"></label>
+        <label>Lớp<input id="s-class" required maxlength="30" placeholder="VD: HSK3-K05"></label>
+        <label>Email<input id="s-email" type="email" autocomplete="email" required></label>
+        <div class="row2">
+          <label>Mật khẩu<input id="s-pass" type="password" autocomplete="new-password" required minlength="6"></label>
+          <label>Nhập lại<input id="s-pass2" type="password" autocomplete="new-password" required minlength="6"></label>
+        </div>
+        <p class="hint">Mật khẩu tối thiểu 6 ký tự.</p>
+        <button class="btn" type="submit">Đăng ký</button>
+      </form>
+
+      <!-- Quên mật khẩu -->
+      <form id="f-forgot" novalidate hidden>
+        <div><h2>Lấy lại mật khẩu</h2><p class="sub">Nhập email, hệ thống sẽ gửi đường link đặt lại mật khẩu.</p></div>
+        <label>Email<input id="r-email" type="email" autocomplete="email" required></label>
+        <button class="btn" type="submit">Gửi email</button>
+        <button class="link" type="button" data-back>Quay lại đăng nhập</button>
+      </form>
+
+      <!-- Đặt mật khẩu mới (mở từ email) -->
+      <form id="f-reset" novalidate hidden>
+        <div><h2>Đặt mật khẩu mới</h2><p class="sub">Nhập mật khẩu mới cho tài khoản của em.</p></div>
+        <label>Mật khẩu mới<input id="n-pass" type="password" autocomplete="new-password" required minlength="6"></label>
+        <label>Nhập lại<input id="n-pass2" type="password" autocomplete="new-password" required minlength="6"></label>
+        <button class="btn" type="submit">Lưu mật khẩu</button>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="/assets/auth.js"></script>
+<script>
+(async function () {
+  const $ = s => document.querySelector(s);
+  const params = new URLSearchParams(location.search);
+  const next = TPC.safeNext(params.get("next"));
+  const forms = { login: $("#f-login"), signup: $("#f-signup"), forgot: $("#f-forgot"), reset: $("#f-reset") };
+  const show = (text, ok) => { const m = $("#msg"); m.textContent = text; m.className = "msg " + (ok ? "ok" : "bad"); m.hidden = !text; };
+  const mode = m => {
+    Object.entries(forms).forEach(([k, f]) => f.hidden = k !== m);
+    $("#tabs").hidden = m === "forgot" || m === "reset";
+    document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.m === m));
+    show("");
+  };
+  document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => mode(b.dataset.m));
+  $("#to-forgot").onclick = () => { $("#r-email").value = $("#l-email").value; mode("forgot"); };
+  document.querySelector("[data-back]").onclick = () => mode("login");
+  if (params.get("mode") === "signup") mode("signup");
+
+  const VI = {
+    "Invalid login credentials": "Email hoặc mật khẩu không đúng.",
+    "Email not confirmed": "Email chưa được xác nhận. Em mở hộp thư và bấm vào đường link xác nhận trước nhé.",
+    "User already registered": "Email này đã được đăng ký. Em chuyển sang Đăng nhập nhé.",
+    "Password should be at least 6 characters.": "Mật khẩu cần tối thiểu 6 ký tự.",
+    "Unable to validate email address: invalid format": "Email không đúng định dạng."
+  };
+  const tr = e => VI[e && e.message] || (e && e.message) || "Có lỗi xảy ra, em thử lại nhé.";
+  const busy = (f, on) => f.querySelectorAll("button").forEach(b => b.disabled = on);
+
+  let sb;
+  try { sb = await TPC.client(); } catch (e) { show(e.message); return; }
+
+  // Đã đăng nhập thì vào thẳng trang học (trừ khi đang đặt lại mật khẩu)
+  const isRecovery = location.hash.includes("type=recovery") || params.get("reset") === "1";
+  sb.auth.onAuthStateChange(ev => { if (ev === "PASSWORD_RECOVERY") mode("reset"); });
+  const { data: { session } } = await sb.auth.getSession();
+  if (isRecovery) mode("reset");
+  else if (session) { location.replace(next); return; }
+
+  forms.login.onsubmit = async e => {
+    e.preventDefault();
+    const email = $("#l-email").value.trim(), password = $("#l-pass").value;
+    if (!email || !password) return show("Em nhập đủ email và mật khẩu nhé.");
+    busy(forms.login, true);
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    busy(forms.login, false);
+    if (error) return show(tr(error));
+    location.replace(next);
+  };
+
+  forms.signup.onsubmit = async e => {
+    e.preventDefault();
+    const full_name = $("#s-name").value.trim(), class_name = $("#s-class").value.trim();
+    const email = $("#s-email").value.trim(), password = $("#s-pass").value;
+    if (!full_name || !class_name || !email || !password) return show("Em điền đủ họ tên, lớp, email và mật khẩu nhé.");
+    if (password.length < 6) return show("Mật khẩu cần tối thiểu 6 ký tự.");
+    if (password !== $("#s-pass2").value) return show("Hai lần nhập mật khẩu chưa giống nhau.");
+    busy(forms.signup, true);
+    const { data, error } = await sb.auth.signUp({
+      email, password,
+      options: { data: { full_name, class_name }, emailRedirectTo: location.origin + "/login" }
+    });
+    busy(forms.signup, false);
+    if (error) return show(tr(error));
+    if (data.session) { location.replace(next); return; }
+    mode("login");
+    $("#l-email").value = email;
+    show("Đăng ký thành công! Em mở email " + email + " và bấm vào đường link xác nhận, sau đó quay lại đây đăng nhập.", true);
+  };
+
+  forms.forgot.onsubmit = async e => {
+    e.preventDefault();
+    const email = $("#r-email").value.trim();
+    if (!email) return show("Em nhập email nhé.");
+    busy(forms.forgot, true);
+    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + "/login?reset=1" });
+    busy(forms.forgot, false);
+    if (error) return show(tr(error));
+    show("Đã gửi email đặt lại mật khẩu đến " + email + ". Em mở email và bấm vào đường link nhé.", true);
+  };
+
+  forms.reset.onsubmit = async e => {
+    e.preventDefault();
+    const p = $("#n-pass").value;
+    if (p.length < 6) return show("Mật khẩu cần tối thiểu 6 ký tự.");
+    if (p !== $("#n-pass2").value) return show("Hai lần nhập mật khẩu chưa giống nhau.");
+    busy(forms.reset, true);
+    const { error } = await sb.auth.updateUser({ password: p });
+    busy(forms.reset, false);
+    if (error) return show(tr(error));
+    show("Đã đổi mật khẩu. Đang vào trang học…", true);
+    setTimeout(() => location.replace("/"), 900);
+  };
+})();
+</script>
+</body>
+</html>
