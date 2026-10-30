@@ -406,7 +406,8 @@ html,body{height:auto}body{margin:0;font:14px system-ui,-apple-system,"Segoe UI"
 </style>
 </head>
 <body class="locked">
-<div id="gate">Đang kiểm tra đăng nhập…</div>
+<div id="gate"><div class="gate-box">Đang kiểm tra đăng nhập…<br><small style="opacity:.6">bản 30/10</small></div></div>
+<script>setTimeout(function(){var g=document.getElementById("gate");if(g&&!g.querySelector("b"))g.innerHTML='<div class="gate-box"><b>Trang tải quá lâu</b><p>Mạng đang chặn hoặc rất chậm khi kết nối tới máy chủ. Hãy thử bật VPN (hoặc đổi sang 4G) rồi tải lại trang.</p><small style="opacity:.6">bản 30/10</small></div>'},20000)</script>
 <div class="shell">
   <aside class="sb" id="sb" aria-label="Điều hướng"></aside>
   <div style="min-width:0">
